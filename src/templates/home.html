@@ -1,0 +1,76 @@
+{% extends "layout.html" %} {% block content%}
+<main style="background: #edf1f5">
+   <div
+      class="container-fluid d-flex flex-column align-items-center py-5"
+      style="min-height: 85vh; max-width: 750px"
+   >
+      <div class="container-fluid mt-4 mb-4">
+         <h2 class="text-center fw-bolder m-0">CHAPA TU CHAMBA</h2>
+      </div>
+
+      <div style="margin-bottom: 3rem">
+         <p class="m-0" style="text-align: justify; font-weight: 400">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Suscipit
+            obcaecati odio delectus et omnis veniam saepe minima dolorum sequi.
+            Explicabo distinctio similique laborum ex repellendus inventore
+            quidem, alias dolores fugiat, aut autem aperiam voluptate nulla iste
+         </p>
+      </div>
+
+      <form
+         class="form d-flex flex-column align-items-center justify-content-center"
+         style="width: 90%"
+      >
+         <div class="mb-4 w-100">
+            <input
+               type="text"
+               class="form-control rounded-1 border-0 shadow-sm input ps-4"
+               id="inputTrabajo"
+               aria-describedby="emailHelp"
+               placeholder="Busca tu chamba soñada"
+            />
+         </div>
+
+         <div class="mb-5 w-100">
+            <select class="form-select rounded-1 border-0 shadow-sm input ps-4">
+               <option selected>Todo el País</option>
+               <option value="amazonas">Amazonas</option>
+               <option value="ancash">Áncash</option>
+               <option value="apurimac">Apurímac</option>
+               <option value="arequipa">Arequipa</option>
+               <option value="ayacucho">Ayacucho</option>
+               <option value="cajamarca">Cajamarca</option>
+               <option value="callao">Callao</option>
+               <option value="cusco">Cusco</option>
+               <option value="huancavelica">Huancavelica</option>
+               <option value="huanuco">Huánuco</option>
+               <option value="ica">Ica</option>
+               <option value="junin">Junín</option>
+               <option value="la_libertad">La Libertad</option>
+               <option value="lambayaque">Lambayeque</option>
+               <option value="Lima">Lima</option>
+               <option value="loreto">Loreto</option>
+               <option value="madre_dios">Madre de Dios</option>
+               <option value="moquegua">Moquegua</option>
+               <option value="pasco">Pasco</option>
+               <option value="piura">Piura</option>
+               <option value="puno">Puno</option>
+               <option value="san_martin">San Martín</option>
+               <option value="tacna">Tacna</option>
+               <option value="tumbes">Tumbes</option>
+               <option value="ucayali">Ucayali</option>
+            </select>
+         </div>
+
+         <button
+            type="submit"
+            class="btn rounded-1 text-light fw-bolder"
+            style="background: #f0483e; width: 150px"
+         >
+            BUSCAR
+         </button>
+      </form>
+   </div>
+</main>
+
+{% endblock %}

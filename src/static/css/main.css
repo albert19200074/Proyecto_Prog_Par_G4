@@ -1,0 +1,28 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Poppins', sans-serif;
+}
+
+html {
+   font-size: 16px;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+   background: #283342 !important;
+}
+
+.form-control::placeholder {
+   color: #b0b4ba;
+   font-weight: 600;
+}
+
+.input {
+   height: 55px;
+}
+
+.input:focus {
+   border: none;
+}
