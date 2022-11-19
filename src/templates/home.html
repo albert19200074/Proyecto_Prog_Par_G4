@@ -18,6 +18,8 @@
       </div>
 
       <form
+         action="/trabajos"
+         method="post"
          class="form d-flex flex-column align-items-center justify-content-center"
          style="width: 90%"
       >
@@ -26,13 +28,16 @@
                type="text"
                class="form-control rounded-1 border-0 shadow-sm input ps-4"
                id="inputTrabajo"
-               aria-describedby="emailHelp"
+               name="nombreTrabajo"
                placeholder="Busca tu chamba soñada"
             />
          </div>
 
          <div class="mb-5 w-100">
-            <select class="form-select rounded-1 border-0 shadow-sm input ps-4">
+            <select
+               class="form-select rounded-1 border-0 shadow-sm input ps-4"
+               name="nombreUbicacion"
+            >
                <option selected>Todo el País</option>
                <option value="amazonas">Amazonas</option>
                <option value="ancash">Áncash</option>
@@ -64,6 +69,7 @@
 
          <button
             type="submit"
+            value="enviar"
             class="btn rounded-1 text-light fw-bolder"
             style="background: #f0483e; width: 150px"
          >
