@@ -1,22 +1,12 @@
-from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
+from flask import Flask, render_template, request
 from selenium import webdriver
 from bs4 import BeautifulSoup
 
 from selenium.webdriver.firefox.service import Service as FireFoxService
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.edge.service import Service as EdgeService
-
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
-from webdriver_manager.chrome import ChromeDriverManager
-
 from selenium.webdriver.firefox.options import Options as FireFoxOption
-from selenium.webdriver.chrome.options import Options as ChromeOption
-from selenium.webdriver.edge.options import Options as EdgeOption
 
 import time
-import json
 import threading as th
 
 app = Flask(__name__)
@@ -176,30 +166,7 @@ def searchJob():
     hilo1.join()
     hilo2.join()
 
-    # return jsonify(lista_empleos)
     return render_template("trabajos.html", lista_empleos=lista_empleos)
-
-    # buscar = Main(request.form["nombreTrabajo"])
-
-    # hilo1 = th.Thread(target=buscar.computrabajo)
-    # hilo2 = th.Thread(target=buscar.bumeran)
-
-    # hilo1.start()
-    # hilo2.start()
-
-    # hilo1.join()
-    # hilo2.join()
-
-    # with open("data/data.json", "r", encoding="utf8") as file:
-    #     file_data = json.load(file)
-
-    # return jsonify(file_data)
-    # # return render_template("trabajos.html",file_data)
-
-
-@app.route("/trabajos", methods=["GET"])
-def getJob():
-    return render_template("trabajos.html")
 
 
 if __name__ == "__main__":
