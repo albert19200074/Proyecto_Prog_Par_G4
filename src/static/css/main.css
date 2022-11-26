@@ -23,6 +23,25 @@ html {
    height: 55px;
 }
 
+.card-item {
+   background: #ffffff;
+   border-radius: 4px;
+}
+
+.line {
+   border-bottom: 1px solid rgba(29, 36, 46, 0.3);
+}
+
+.form-control2 {
+   border-radius: 4px;
+   width: 90%;
+}
+
+.form-control2::placeholder {
+   color: rgba(29, 36, 46, 0.5);
+   font-weight: 400;
+}
+
 .input:focus {
-   border: none;
+   outline: none;
 }

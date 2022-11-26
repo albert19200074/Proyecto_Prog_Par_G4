@@ -1,5 +1,161 @@
 {% extends "layout.html" %} {% block content%}
 
-<h1>TRABAJOS</h1>
+<main style="background: #edf1f5">
+   <div class="container-fluid py-5" style="max-width: 1300px">
+      <div class="mb-4">
+         <h2 class="mb-2" style="font-weight: 700">
+            Lista de Ofertas<span style="font-weight: 400">></span>
+         </h2>
+         <p class="m-0" style="font-weight: 400">
+            Puesto Laborales Encontrados
+         </p>
+      </div>
 
+      <form
+         action="/trabajos"
+         method="post"
+         class="form d-flex align-items-center justify-content-between mb-5"
+      >
+         <div class="w-100">
+            <input
+               type="text"
+               class="input form-control2 border-0 shadow-sm ps-4"
+               id="inputTrabajo"
+               name="nombreTrabajo"
+               placeholder="Buscar trabajo ..."
+            />
+         </div>
+
+         <div class="w-25">
+            <select
+               class="form-select rounded-1 border-0 shadow-sm input ps-4"
+               name="nombreUbicacion"
+            >
+               <option selected>Todo el País</option>
+               <option value="amazonas">Amazonas</option>
+               <option value="ancash">Áncash</option>
+               <option value="apurimac">Apurímac</option>
+               <option value="arequipa">Arequipa</option>
+               <option value="ayacucho">Ayacucho</option>
+               <option value="cajamarca">Cajamarca</option>
+               <option value="callao">Callao</option>
+               <option value="cusco">Cusco</option>
+               <option value="huancavelica">Huancavelica</option>
+               <option value="huanuco">Huánuco</option>
+               <option value="ica">Ica</option>
+               <option value="junin">Junín</option>
+               <option value="la_libertad">La Libertad</option>
+               <option value="lambayaque">Lambayeque</option>
+               <option value="Lima">Lima</option>
+               <option value="loreto">Loreto</option>
+               <option value="madre_dios">Madre de Dios</option>
+               <option value="moquegua">Moquegua</option>
+               <option value="pasco">Pasco</option>
+               <option value="piura">Piura</option>
+               <option value="puno">Puno</option>
+               <option value="san_martin">San Martín</option>
+               <option value="tacna">Tacna</option>
+               <option value="tumbes">Tumbes</option>
+               <option value="ucayali">Ucayali</option>
+            </select>
+         </div>
+      </form>
+
+      <section class="d-flex flex-column gap-4 pt-4">
+         {% for x in lista_empleos %}
+         <article class="card">
+            <div class="d-flex align-items-center py-3 px-4">
+               <h3 class="m-0" style="font-weight: 600; font-size: 1rem">
+                  {{x["cargo"]}}
+               </h3>
+            </div>
+            <div class="m-0 p-0">
+               <hr class="m-0 p-0" />
+            </div>
+
+            <div
+               class="d-flex text-center m-0"
+               style="font-weight: 500; font-size: 0.9rem"
+            >
+               <div class="" style="width: 10%">
+                  {% if x["pagina"] == "CompuTrabajo" %}
+                  <img
+                     src="{{url_for('static',filename = 'img/compu.jpg')}}"
+                     alt="Logo"
+                     style="width: 70%"
+                     width="50"
+                     height="80"
+                  />
+                  {% else %}
+                  <img
+                     src="{{url_for('static',filename = 'img/bumeran.png')}}"
+                     alt="Logo"
+                     style="width: 70%"
+                     width="50"
+                     height="80"
+                  />
+                  {% endif %}
+               </div>
+               <p class="my-auto" style="width: 30%">{{x["empresa"]}}</p>
+               <p class="my-auto" style="width: 20%">{{x["ubicacion"]}}</p>
+               <p class="my-auto" style="width: 30%">{{x["publicacion"]}}</p>
+               <div
+                  class="d-flex align-items-center justify-content-center"
+                  style="width: 10%"
+               >
+                  <a
+                     class="my-auto btn rounded-1 text-light fw-bolder my-auto"
+                     style="background: #f0483e"
+                     href="{{x['enlace']}}"
+                     target="_blank"
+                     >GO></a
+                  >
+               </div>
+            </div>
+         </article>
+         {% endfor %}
+
+         <!-- <article class="card">
+            <div class="d-flex align-items-center py-3 px-4">
+               <h3 class="m-0" style="font-weight: 600; font-size: 1rem">
+                  Practicante Preprofesional en la Dpto. Planeamiento y Control
+                  de Gestión Canales
+               </h3>
+            </div>
+            <div class="m-0 p-0">
+               <hr class="m-0 p-0" />
+            </div>
+
+            <div
+               class="d-flex text-center m-0"
+               style="font-weight: 500; font-size: 0.9rem"
+            >
+               <div class="" style="width: 15%">
+                  <img
+                     src="{{url_for('static',filename = 'img/compu.jpg')}}"
+                     alt="Logo"
+                     style="width: 70%"
+                     height="120"
+                     width="80"
+                  />
+               </div>
+               <p class="my-auto" style="width: 30%">INTERBANK</p>
+               <p class="my-auto" style="width: 20%">La victoria Perú</p>
+               <p class="my-auto" style="width: 25%">Publicado hace 3 días</p>
+               <div
+                  class="d-flex align-items-center justify-content-center"
+                  style="width: 10%"
+               >
+                  <a
+                     class="my-auto btn rounded-1 text-light fw-bolder my-auto"
+                     style="background: #f0483e"
+                     href=""
+                     >GO></a
+                  >
+               </div>
+            </div>
+         </article> -->
+      </section>
+   </div>
+</main>
 {% endblock %}
