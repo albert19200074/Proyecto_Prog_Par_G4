@@ -113,7 +113,15 @@
                </div>
             </div>
          </article>
-         {% endfor %}
+         {% endfor %} {% if not lista_empleos %}
+         <article class="card">
+            <div class="d-flex align-items-center py-3 px-4">
+               <h3 class="m-0" style="font-weight: 600; font-size: 1rem">
+                  No se encontraron resultados
+               </h3>
+            </div>
+         </article>
+         {% endif %}
 
          <!-- <article class="card">
             <div class="d-flex align-items-center py-3 px-4">

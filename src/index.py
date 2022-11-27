@@ -10,11 +10,47 @@ import time
 import threading as th
 
 app = Flask(__name__)
-app.config["JSON_AS_ASCII"] = False
+# app.config["JSON_AS_ASCII"] = False
+
+options = FireFoxOption()
+options.headless = True
+
+inicio = True
+
+
+def inicializarC():
+    global _browser1
+
+    _browser1 = webdriver.Firefox(
+        service=FireFoxService(GeckoDriverManager().install()),
+        options=options,
+    )
+
+
+def inicializarB():
+    global _browser2
+
+    _browser2 = webdriver.Firefox(
+        service=FireFoxService(GeckoDriverManager().install()),
+        options=options,
+    )
 
 
 @app.route("/")
 def home():
+    global inicio
+
+    if inicio:
+        hilo1 = th.Thread(target=inicializarC)
+        hilo2 = th.Thread(target=inicializarB)
+
+        hilo1.start()
+        hilo2.start()
+
+        hilo1.join()
+        hilo2.join()
+
+        inicio = False
     return render_template("home.html")
 
 
@@ -29,14 +65,12 @@ def searchJob():
 
     lista_empleos = []
 
-    options = FireFoxOption()
-    options.headless = True
+    def save_list(data):
+        lock.acquire()
+        lista_empleos.append(data)
+        lock.release()
 
     def Bumeran():
-        _browser = webdriver.Firefox(
-            service=FireFoxService(GeckoDriverManager().install()),
-            options=options,
-        )
 
         # URLs
         url = "https://www.bumeran.com.pe"
@@ -51,12 +85,12 @@ def searchJob():
         urlBusqueda = url + key
 
         # Ingreso a la pagina
-        _browser.get(urlBusqueda)
+        _browser1.get(urlBusqueda)
 
         time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser.page_source, "html.parser")
+        page = BeautifulSoup(_browser1.page_source, "html.parser")
 
         # Empleos
         jobs = page.find_all("div", {"class": "sc-fYAFcb"})
@@ -70,8 +104,7 @@ def searchJob():
             lugar = job.find_all("h3")[3].text
             modo = job.find_all("h3")[4].text
 
-            lock.acquire()
-            lista_empleos.append(
+            save_list(
                 {
                     "pagina": "Bumeran",
                     "enlace": link,
@@ -79,18 +112,12 @@ def searchJob():
                     "empresa": empresa,
                     "publicacion": fecha_publicacion,
                     "ubicacion": lugar,
-                    "modo": modo,
                 }
             )
-            lock.release()
 
-        _browser.close()
+        # _browser1.close()
 
     def CompuTrabajo():
-        _browser = webdriver.Firefox(
-            service=FireFoxService(GeckoDriverManager().install()),
-            options=options,
-        )
 
         # URLs
         url = "https://pe.computrabajo.com"
@@ -103,10 +130,12 @@ def searchJob():
         urlBusqueda = url + key
 
         # Ingreso a la pagina
-        _browser.get(urlBusqueda)
+        _browser2.get(urlBusqueda)
+
+        time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser.page_source, "html.parser")
+        page = BeautifulSoup(_browser2.page_source, "html.parser")
 
         # Empleos
         jobs = page.find_all("article", {"class": "box_offer"})
@@ -142,8 +171,7 @@ def searchJob():
                     lugar = "Sin Información"
             fecha_publicacion = job.find("p", {"class": "fs13 fc_aux"}).text.strip()
 
-            lock.acquire()
-            lista_empleos.append(
+            save_list(
                 {
                     "pagina": "CompuTrabajo",
                     "enlace": link,
@@ -153,12 +181,11 @@ def searchJob():
                     "ubicacion": lugar,
                 }
             )
-            lock.release()
 
-        _browser.close()
+        # _browser2.close()
 
-    hilo1 = th.Thread(target=CompuTrabajo)
-    hilo2 = th.Thread(target=Bumeran)
+    hilo1 = th.Thread(target=CompuTrabajo, name="Compu")
+    hilo2 = th.Thread(target=Bumeran, name="Bumeran")
 
     hilo1.start()
     hilo2.start()
