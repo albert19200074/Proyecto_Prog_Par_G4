@@ -6,8 +6,13 @@ from selenium.webdriver.firefox.service import Service as FireFoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FireFoxOption
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 import time
 import threading as th
+import json
 
 app = Flask(__name__)
 # app.config["JSON_AS_ASCII"] = False
@@ -16,6 +21,39 @@ options = FireFoxOption()
 options.headless = True
 
 inicio = True
+
+lock = th.Lock()
+
+
+def open_json():
+    with open("data.json", "r+", encoding="utf8") as file:
+        file_data = json.load(file)
+        return file_data
+
+
+def write_json(new_data):
+    lock.acquire()
+    with open("data.json", "r+", encoding="utf8") as file:
+        file_data = json.load(file)
+        file_data.append(new_data)
+        file.seek(0)
+        json.dump(
+            file_data,
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
+    lock.release()
+
+
+def delete_json():
+    with open("data.json", "w") as file:
+        json.dump(
+            [],
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
 
 
 def inicializarC():
@@ -51,24 +89,19 @@ def home():
         hilo2.join()
 
         inicio = False
+
     return render_template("home.html")
 
 
 @app.route("/trabajos", methods=["POST"])
 def searchJob():
-    lock = th.Lock()
 
     # Remplazo de tildes y ñ
     trans = str.maketrans("áéíóúüñ", "aeiouun")
     jobName = request.form["nombreTrabajo"].translate(trans).lower().replace(" ", "-")
     placeName = request.form["nombreUbicacion"].lower().replace(" ", "-")
 
-    lista_empleos = []
-
-    def save_list(data):
-        lock.acquire()
-        lista_empleos.append(data)
-        lock.release()
+    delete_json()
 
     def Bumeran():
 
@@ -93,7 +126,7 @@ def searchJob():
         page = BeautifulSoup(_browser1.page_source, "html.parser")
 
         # Empleos
-        jobs = page.find_all("div", {"class": "sc-fYAFcb"})
+        jobs = page.find_all("div", {"class": "sc-gohEOc"})
 
         # Guardar Empleos
         for job in jobs:
@@ -102,9 +135,8 @@ def searchJob():
             empresa = job.find_all("h3")[0].text
             fecha_publicacion = job.find_all("h3")[2].text
             lugar = job.find_all("h3")[3].text
-            modo = job.find_all("h3")[4].text
 
-            save_list(
+            write_json(
                 {
                     "pagina": "Bumeran",
                     "enlace": link,
@@ -114,8 +146,6 @@ def searchJob():
                     "ubicacion": lugar,
                 }
             )
-
-        # _browser1.close()
 
     def CompuTrabajo():
 
@@ -171,7 +201,7 @@ def searchJob():
                     lugar = "Sin Información"
             fecha_publicacion = job.find("p", {"class": "fs13 fc_aux"}).text.strip()
 
-            save_list(
+            write_json(
                 {
                     "pagina": "CompuTrabajo",
                     "enlace": link,
@@ -192,6 +222,8 @@ def searchJob():
 
     hilo1.join()
     hilo2.join()
+
+    lista_empleos = open_json()
 
     return render_template("trabajos.html", lista_empleos=lista_empleos)
 
