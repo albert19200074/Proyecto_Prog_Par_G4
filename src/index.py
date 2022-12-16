@@ -6,16 +6,11 @@ from selenium.webdriver.firefox.service import Service as FireFoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FireFoxOption
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 import time
 import threading as th
 import json
 
 app = Flask(__name__)
-# app.config["JSON_AS_ASCII"] = False
 
 options = FireFoxOption()
 options.headless = True
@@ -56,22 +51,30 @@ def delete_json():
         )
 
 
-def inicializarC():
-    global _browser1
+def installerDriverB():
+    # global _browser2
 
-    _browser1 = webdriver.Firefox(
-        service=FireFoxService(GeckoDriverManager().install()),
-        options=options,
-    )
+    # _browser2 = webdriver.Firefox(
+    #     service=FireFoxService(GeckoDriverManager().install()),
+    #     options=options,
+    # )
+
+    # cambio
+    global inst_b
+    inst_b = FireFoxService(GeckoDriverManager().install())
 
 
-def inicializarB():
-    global _browser2
+def installerDriverC():
+    # global _browser1
 
-    _browser2 = webdriver.Firefox(
-        service=FireFoxService(GeckoDriverManager().install()),
-        options=options,
-    )
+    # _browser1 = webdriver.Firefox(
+    #     service=FireFoxService(GeckoDriverManager().install()),
+    #     options=options,
+    # )
+
+    # cambio
+    global inst_c
+    inst_c = FireFoxService(GeckoDriverManager().install())
 
 
 @app.route("/")
@@ -79,14 +82,14 @@ def home():
     global inicio
 
     if inicio:
-        hilo1 = th.Thread(target=inicializarC)
-        hilo2 = th.Thread(target=inicializarB)
+        hilo_inst_b = th.Thread(target=installerDriverB)
+        hilo_inst_c = th.Thread(target=installerDriverC)
 
-        hilo1.start()
-        hilo2.start()
+        hilo_inst_b.start()
+        hilo_inst_c.start()
 
-        hilo1.join()
-        hilo2.join()
+        hilo_inst_b.join()
+        hilo_inst_c.join()
 
         inicio = False
 
@@ -95,15 +98,19 @@ def home():
 
 @app.route("/trabajos", methods=["POST"])
 def searchJob():
+    delete_json()
 
     # Remplazo de tildes y ñ
     trans = str.maketrans("áéíóúüñ", "aeiouun")
     jobName = request.form["nombreTrabajo"].translate(trans).lower().replace(" ", "-")
     placeName = request.form["nombreUbicacion"].lower().replace(" ", "-")
 
-    delete_json()
-
     def Bumeran():
+
+        _browser = webdriver.Firefox(
+            service=inst_b,
+            options=options,
+        )
 
         # URLs
         url = "https://www.bumeran.com.pe"
@@ -112,21 +119,23 @@ def searchJob():
             key = f"/empleos-busqueda-{jobName}.html"
         elif placeName == "cusco":
             key = f"/en-cuzco/empleos-busqueda-{jobName}.html"
+        elif placeName == "callao":
+            key = f"/en-gobierno-regional-del-callao/empleos-busqueda-{jobName}.html"
         else:
             key = f"/en-{placeName}/empleos-busqueda-{jobName}.html"
 
         urlBusqueda = url + key
 
         # Ingreso a la pagina
-        _browser1.get(urlBusqueda)
+        _browser.get(urlBusqueda)
 
         time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser1.page_source, "html.parser")
+        page = BeautifulSoup(_browser.page_source, "html.parser")
 
         # Empleos
-        jobs = page.find_all("div", {"class": "sc-gohEOc"})
+        jobs = page.find_all("div", {"class": "sc-ctwKVn"})
 
         # Guardar Empleos
         for job in jobs:
@@ -148,6 +157,10 @@ def searchJob():
             )
 
     def CompuTrabajo():
+        _browser = webdriver.Firefox(
+            service=inst_c,
+            options=options,
+        )
 
         # URLs
         url = "https://pe.computrabajo.com"
@@ -160,12 +173,12 @@ def searchJob():
         urlBusqueda = url + key
 
         # Ingreso a la pagina
-        _browser2.get(urlBusqueda)
+        _browser.get(urlBusqueda)
 
         time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser2.page_source, "html.parser")
+        page = BeautifulSoup(_browser.page_source, "html.parser")
 
         # Empleos
         jobs = page.find_all("article", {"class": "box_offer"})
@@ -211,8 +224,6 @@ def searchJob():
                     "ubicacion": lugar,
                 }
             )
-
-        # _browser2.close()
 
     hilo1 = th.Thread(target=CompuTrabajo, name="Compu")
     hilo2 = th.Thread(target=Bumeran, name="Bumeran")
