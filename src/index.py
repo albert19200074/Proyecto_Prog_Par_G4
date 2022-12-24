@@ -52,34 +52,28 @@ def delete_json():
 
 
 def installerDriverB():
-    # global _browser2
+    global _browser_bumeran
 
-    # _browser2 = webdriver.Firefox(
-    #     service=FireFoxService(GeckoDriverManager().install()),
-    #     options=options,
-    # )
-
-    # cambio
-    global inst_b
-    inst_b = FireFoxService(GeckoDriverManager().install())
+    _browser_bumeran = webdriver.Firefox(
+        service=FireFoxService(GeckoDriverManager().install()),
+        options=options,
+    )
 
 
 def installerDriverC():
-    # global _browser1
+    global _browser_compu
 
-    # _browser1 = webdriver.Firefox(
-    #     service=FireFoxService(GeckoDriverManager().install()),
-    #     options=options,
-    # )
-
-    # cambio
-    global inst_c
-    inst_c = FireFoxService(GeckoDriverManager().install())
+    _browser_compu = webdriver.Firefox(
+        service=FireFoxService(GeckoDriverManager().install()),
+        options=options,
+    )
 
 
 @app.route("/")
 def home():
     global inicio
+    global hilo_inst_b
+    global hilo_inst_c
 
     if inicio:
         hilo_inst_b = th.Thread(target=installerDriverB)
@@ -87,9 +81,6 @@ def home():
 
         hilo_inst_b.start()
         hilo_inst_c.start()
-
-        hilo_inst_b.join()
-        hilo_inst_c.join()
 
         inicio = False
 
@@ -107,11 +98,6 @@ def searchJob():
 
     def Bumeran():
 
-        _browser = webdriver.Firefox(
-            service=inst_b,
-            options=options,
-        )
-
         # URLs
         url = "https://www.bumeran.com.pe"
 
@@ -126,16 +112,18 @@ def searchJob():
 
         urlBusqueda = url + key
 
+        hilo_inst_b.join()
+
         # Ingreso a la pagina
-        _browser.get(urlBusqueda)
+        _browser_bumeran.get(urlBusqueda)
 
         time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser.page_source, "html.parser")
+        page = BeautifulSoup(_browser_bumeran.page_source, "html.parser")
 
         # Empleos
-        jobs = page.find_all("div", {"class": "sc-ctwKVn"})
+        jobs = page.find_all("div", {"class": "sc-cXHFlN"})
 
         # Guardar Empleos
         for job in jobs:
@@ -157,10 +145,6 @@ def searchJob():
             )
 
     def CompuTrabajo():
-        _browser = webdriver.Firefox(
-            service=inst_c,
-            options=options,
-        )
 
         # URLs
         url = "https://pe.computrabajo.com"
@@ -172,13 +156,15 @@ def searchJob():
 
         urlBusqueda = url + key
 
+        hilo_inst_c.join()
+
         # Ingreso a la pagina
-        _browser.get(urlBusqueda)
+        _browser_compu.get(urlBusqueda)
 
         time.sleep(0.5)
 
         # Página
-        page = BeautifulSoup(_browser.page_source, "html.parser")
+        page = BeautifulSoup(_browser_compu.page_source, "html.parser")
 
         # Empleos
         jobs = page.find_all("article", {"class": "box_offer"})
@@ -186,12 +172,15 @@ def searchJob():
         # Guardar Empleos
         for job in jobs:
             v = True
-            link = url + job.find("a", {"class": "js-o-link fc_base"}).get("href")
-            cargo = job.find("a", {"class": "js-o-link fc_base"}).text.strip()
+            link = url + job.find("a", {"class": "js-o-link"}).get("href")
+            cargo = job.find("a", {"class": "js-o-link"}).text.strip()
             try:
-                empresa = job.find(
-                    "a", {"class": "fc_base hover it-blank"}
-                ).text.strip()
+                empresa = job.find_all("a", {"class": "fc_base"})[1].text.strip()
+                if empresa == "Postular":
+                    empresa = job.find(
+                        "p", {"class": "fs16 fc_base mt5 mb5"}
+                    ).text.strip()
+                    empresa = empresa[: empresa.find("\n")]
             except:
                 empresa = job.find("p", {"class": "fs16 fc_base mt5 mb5"}).text.strip()
                 empresa = empresa[: empresa.find("\n")]

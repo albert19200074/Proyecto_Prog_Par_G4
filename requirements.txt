@@ -1,0 +1,7 @@
+#Se crea un entorno virtual
+
+selenium
+beautifulsoup4
+selenium
+flask
+webdriver-manager
