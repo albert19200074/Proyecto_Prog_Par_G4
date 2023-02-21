@@ -13,7 +13,7 @@ import json
 app = Flask(__name__)
 
 options = FireFoxOption()
-options.headless = True
+options.add_argument("-headless")
 
 inicio = True
 
@@ -123,7 +123,7 @@ def searchJob():
         page = BeautifulSoup(_browser_bumeran.page_source, "html.parser")
 
         # Empleos
-        jobs = page.find_all("div", {"class": "sc-cXHFlN"})
+        jobs = page.find_all("div", {"class": "sc-bLsOVe"})
 
         # Guardar Empleos
         for job in jobs:

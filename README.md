@@ -47,7 +47,7 @@ pip install virtualenv
 python -m venv venv
 
 # 3. Dirigirnos a la carpeta creada Scripts dentro de venv
-cd venv/Srcipts
+cd venv/Scripts
 
 # 4. Instalar las librerías necesarias
 pip install -r ../../requirements.txt
